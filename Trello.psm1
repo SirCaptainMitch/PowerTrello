@@ -231,7 +231,8 @@ function Get-TrelloBoardList
 	{
 		try
 		{
-			Invoke-RestMethod -Uri "$baseUrl/boards/$BoardId/lists?$($trelloConfig.String)"
+			# Invoke-RestMethod -Uri "$baseUrl/boards/$BoardId/lists?$($trelloConfig.String)"
+			"$baseUrl/boards/$BoardId/lists?$($trelloConfig.String)"
 		}
 		catch
 		{
