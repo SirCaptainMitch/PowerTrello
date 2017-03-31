@@ -30,6 +30,7 @@ function Get-TrelloBoard
 				$getParams.filter = 'open'
 			}
 			
+			$baseUrl = $Global:trelloConfig.BaseUrl
 			$keyValues = @()
 			$getParams.GetEnumerator() | foreach {
 				$keyValues += "$($_.Key)=$($_.Value)"
