@@ -35,7 +35,7 @@ function Request-TrelloAccessToken
 		}
 		
 		$keyValues = @()
-		$httpParams.GetEnumerator() | sort Name | foreach {
+		$httpParams.GetEnumerator() | sort-object Name | foreach {
 			$keyValues += "$($_.Key)=$($_.Value)"
 		}
 		

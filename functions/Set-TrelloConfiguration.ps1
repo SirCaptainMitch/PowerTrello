@@ -1,32 +1,26 @@
-function Set-TrelloConfiguration
-{
-	[CmdletBinding()]
-	param (
-		[Parameter(Mandatory)]
-		[ValidateNotNullOrEmpty()]
-		[string]$ApiKey,
+function Set-TrelloConfiguration {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]$ApiKey,
 	
-		[Parameter(Mandatory)]
-		[ValidateNotNullOrEmpty()]
-		[string]$AccessToken
-	)
-		
-	if (-not (Test-Path -Path $RegistryKeyPath))
-	{
-		New-Item -Path ($RegistryKeyPath | Split-Path -Parent) -Name ($RegistryKeyPath | Split-Path -Leaf) | Out-Null
-	}
-	
-	$values = 'APIKey', 'AccessToken'
-	foreach ($val in $values)
-	{
-		if ((Get-Item $RegistryKeyPath).GetValue($val))
-		{
-			Write-Verbose "'$RegistryKeyPath\$val' already exists. Skipping."
-		}
-		else
-		{
-			Write-Verbose "Creating $RegistryKeyPath\$val"
-			New-ItemProperty $RegistryKeyPath -Name $val -Value ((Get-Variable $val).Value) -Force | Out-Null
-		}
-	}
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]$AccessToken, 
+        
+        [ValidateNotNullOrEmpty()]
+        [string]$BaseUrl = 'https://api.trello.com/1/', 
+        
+        [ValidateNotNullOrEmpty()]
+        [string]$ProjectName = 'PowerTrello'
+    )
+
+    $global:trelloConfig = [pscustomobject]@{
+        'APIKey' = $APIKey
+        'AccessToken' = $AccessToken
+        'String' = "key=$APIKey&token=$AccessToken"
+        'ProjectName' = $ProjectName
+        'BaseUrl' = $BaseUrl
+    }    
 }
