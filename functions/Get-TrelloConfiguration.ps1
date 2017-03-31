@@ -10,7 +10,7 @@ function Get-TrelloConfiguration
 	{
 		if ($trelloConfig -ne $null) 
 		{ 
-			return $trelloConfig
+			return $global:trelloConfig
 		} else { 
 			Write-Warning "There is no trelloConfig variable, run Set-TrelloConfiguration"
 		}

@@ -4,7 +4,7 @@ function Request-TrelloAccessToken
 	[OutputType('System.String')]
 	param
 	(
-		[Parameter(Mandatory)]
+		[Parameter()]
 		[ValidateNotNullOrEmpty()]
 		[string]$ApiKey,
 		
@@ -14,7 +14,7 @@ function Request-TrelloAccessToken
 	
 		[Parameter()]
 		[ValidateNotNullOrEmpty()]
-		[string]$ApplicationName = $ProjectName,
+		[string]$ApplicationName = 'PowerTrello',
 	
 		[Parameter()]
 		[ValidateNotNullOrEmpty()]
@@ -25,23 +25,27 @@ function Request-TrelloAccessToken
 	$ErrorActionPreference = 'Stop'
 	try
 	{
+
+		If (!$ApiKey) { $ApiKey = $global:trelloConfig.ApiKey}
+
 		$httpParams = @{
 			'key' = $apiKey
 			'expiration' = 'never'
 			'scope' = $Scope
 			'response_type' = 'token'
 			'name' = $ApplicationName
-			'return_url' = 'https://trello.com'
+			'return_url' = 'https://trello.com'			
 		}
 		
 		$keyValues = @()
-		$httpParams.GetEnumerator() | sort-object Name | foreach {
+		$baseUrl = 'https://trello.com/1/authorize/?'
+		$httpParams.GetEnumerator() | sort-object Name | foreach{
 			$keyValues += "$($_.Key)=$($_.Value)"
 		}
 		
 		$keyValueString = $keyValues -join '&'
-		$authUri = "$baseUrl/authorize?$keyValueString"
-		
+		$authUri = "$baseUrl$keyValueString"
+
 		$IE = New-Object -ComObject InternetExplorer.Application
 		$null = $IE.Navigate($authUri)
 		$null = $IE.Visible = $true

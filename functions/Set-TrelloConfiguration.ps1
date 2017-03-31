@@ -2,7 +2,7 @@ function Set-TrelloConfiguration {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty()]        
         [string]$ApiKey,
 	
         [Parameter(Mandatory)]
