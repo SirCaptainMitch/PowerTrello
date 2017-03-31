@@ -61,4 +61,7 @@ function Get-TrelloBoard
 			Write-Error $_.Exception.Message
 		}
 	}
+	end { 
+		## set up return 
+	}
 }
