@@ -3,26 +3,29 @@ function Get-TrelloMember
 	[CmdletBinding()]
 	param
 	(
-		[Parameter(Mandatory,ValueFromPipeline)]
-		[ValidateNotNullOrEmpty()]		
-		$InputObject
+		[Parameter(Mandatory,ValueFromPipelineByPropertyName)]			
+		[AllowNull()][Object]$idMembers
 	)
 	begin {
 		$ErrorActionPreference = 'Stop'
 		$baseUrl = $Global:trelloConfig.BaseUrl
 		$apiString = $Global:trelloConfig.String
+		$members = @() 	
 	}
 	process {
 		try
 		{		
 			$uri = "$baseUrl/members/{0}?$apiString"								
-			foreach ($object in $InputObject) { 
-				$uri -f $object.Id
+			foreach ($id in $idMembers) { 
+				$members += Invoke-RestMethod  ($uri -f $id)
 			}
 		}
 		catch
 		{
 			Write-Error $_.Exception.Message
 		}
+	} 
+	end { 
+		return $members 
 	}
 }
