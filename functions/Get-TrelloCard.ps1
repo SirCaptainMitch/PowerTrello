@@ -39,37 +39,46 @@ function Get-TrelloCard {
 				[string]$RequestUri
             )
 			
-			return Invoke-RestMethod -Uri $requestUri
+            $results = @()
+            $cardCall = Invoke-RestMethod -Uri $RequestUri
+
+            # Get the created date of the card since this is pulled from the id. 
+            foreach ( $c in $cardCall){ 
+                $createdDate = Convert-IdToDate -ObjectId $c.Id
+                Add-Member -InputObject $c -NotePropertyName CreatedDate -NotePropertyValue $createdDate 
+                $results += $c  
+            }
+			return $results 
         }
     }
     process {
-        try {			            
-
-			# "$baseUrl/boards/$($Board.Id)/cards?$($trelloConfig.String)"
-
-            # if ($PSBoundParameters.ContainsKey('Label')) {
-            # 	$cards | where { if (($_.labels) -and $_.labels.Name -contains $Label) { $true } }
-            # }
-            # elseif ($PSBoundParameters.ContainsKey('Due'))
-            # {
-            # 	$cards
-            # }
-            # elseif ($PSBoundParameters.ContainsKey('Name'))
-            # {
-            # 	$cards | where {$_.Name -eq $Name}
-            # }
-            # elseif ($PSBoundParameters.ContainsKey('Id'))
-            # {
-            # 	$cards | where {$_.idShort -eq $Id}
-            # }
-            # else
-            # {
-            # 	$cards
-            # }
-
+        try {
 
 			foreach ($board in $boards) { 
-               $cards += Get-Cards -Board $board -RequestUri $uri
+                $uri = "$baseUrl/boards/$($Board.Id)/cards?$($trelloConfig.String)"
+                $boardCards = Get-Cards -Board $board -RequestUri $uri
+               
+                # have not tested all of these just yet. 
+                if ($PSBoundParameters.ContainsKey('Label')) {                    
+                     $cards += $boardCards| Where-Object { if (($_.labels) -and $_.labels.Name -contains $Label) { $true } }
+                }
+                elseif ($PSBoundParameters.ContainsKey('Due'))
+                {
+                    $cards = $boardCards
+                }
+                elseif ($PSBoundParameters.ContainsKey('Name'))
+                {
+                    $cards = $boardCards | Where-Object {$_.Name -eq $Name}
+                }
+                elseif ($PSBoundParameters.ContainsKey('Id'))
+                {
+                    $cards = $boardCards| Where-Object {$_.idShort -eq $Id}
+                }
+                else
+                {
+                    $cards = $boardCards
+                }
+
             }
         }
         catch {

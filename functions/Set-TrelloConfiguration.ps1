@@ -10,7 +10,7 @@ function Set-TrelloConfiguration {
         [string]$AccessToken, 
         
         [ValidateNotNullOrEmpty()]
-        [string]$BaseUrl = 'https://api.trello.com/1/', 
+        [string]$BaseUrl = 'https://api.trello.com/1', 
         
         [ValidateNotNullOrEmpty()]
         [string]$ProjectName = 'PowerTrello'
