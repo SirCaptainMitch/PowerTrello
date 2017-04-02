@@ -85,7 +85,8 @@
         'Remove-TrelloCardMember',
         'Request-TrelloAccessToken',
         'Set-TrelloCardList',
-        'Set-TrelloConfiguration'
+        'Set-TrelloConfiguration',
+		'Get-TrelloList'
 	)
 	
 	# Cmdlets to export from this module

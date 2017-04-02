@@ -5,35 +5,26 @@ function Get-TrelloBoardList
 	(
 		[Parameter(Mandatory,ValueFromPipelineByPropertyName)]
 		[string]$id
-		
 	)
 	begin
 	{
 		$ErrorActionPreference = 'Stop'
 		$baseUrl = $Global:trelloConfig.BaseUrl 
 		$apiString = $Global:trelloConfig.String
-		$uri = "$baseUrl/lists/{0}?$apiString"
+		$uri = "$baseUrl/boards/{0}?lists=open&$apiString"
 	}
 	process
 	{
 		try
 		{			
-			($uri -f $id)
-			Invoke-RestMethod ($uri -f $id)
+			$lists = (Invoke-RestMethod ($uri -f $id)).lists
 		}
 		catch
 		{
 			Write-Error $_.Exception.Message
 		}
 	}
-	<# 
-		Problem: The id passed needs to be the list id to use the list api call. 
-
-		I can either write to functions for this 1 that requires a boardID passed 
-		in and 1 that gets a list by list id. 
-
-		Or I can write one function that takes two params and calls a different api 
-		method depending on what param is passed. 
-		
-	#> 
+	end { 
+		return $lists 
+	}
 }
