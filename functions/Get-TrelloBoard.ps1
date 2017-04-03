@@ -17,6 +17,7 @@ function Get-TrelloBoard
 	)
 	begin {
 		$ErrorActionPreference = 'Stop'
+		$boards = @()
 	}
 	process {
 		try
@@ -47,12 +48,12 @@ function Get-TrelloBoard
 				}
 				'ById' {
 					$uri = "$baseUrl/boards/$Id"
-					Invoke-RestMethod -Uri ('{0}?{1}' -f $uri, $paramString)
+					$boards = Invoke-RestMethod -Uri ('{0}?{1}' -f $uri, $paramString)
 				}
 				default
 				{
 					$uri = "$baseUrl/members/me/boards"
-					Invoke-RestMethod -Uri ('{0}?{1}' -f $uri, $paramString)
+					$boards = Invoke-RestMethod -Uri ('{0}?{1}' -f $uri, $paramString)
 				}
 			}
 		}
@@ -62,6 +63,6 @@ function Get-TrelloBoard
 		}
 	}
 	end { 
-		## set up return 
+		return $boards 
 	}
 }
