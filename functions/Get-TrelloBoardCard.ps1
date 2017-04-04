@@ -19,7 +19,10 @@ function Get-TrelloBoardCard {
         [string]$Due, 
 
         [Parameter()]
-        [String]$Status = 'open'
+        [String]$Status = 'open', 
+
+        [Parameter(ParameterSetName= 'ShortId')]
+        [String]$ShortId
 				
     )
     begin {
@@ -27,7 +30,14 @@ function Get-TrelloBoardCard {
         $baseUrl = $Global:trelloConfig.BaseUrl
         $string = $Global:trelloConfig.String
         $uri = "$baseUrl/boards/{0}/cards?filter={1}&$string"
-        $cards = @() 	
+        $cards = @()
+        $filters = @('all', 'closed', 'none', 'open','visible')
+        
+        if($filters -notcontains $status) 
+        { 
+            Write-Warning "The filter status: $Status does not exist..."
+            continue 
+        }
 
         function Get-Cards { 
             [CmdletBinding()]
@@ -38,22 +48,24 @@ function Get-TrelloBoardCard {
             )
 			
             $results = @()
-            $cardCall = Invoke-RestMethod -Uri $RequestUri
+            Invoke-RestMethod -Uri $RequestUri
 
             # Get the created date of the card since this is pulled from the id. 
-            foreach ( $card in $cardCall){                  
+            foreach ( $card in $cardCall){
+                                 
                 $createdDate = Convert-IdToDate -ObjectId $card.Id
                 Add-Member -InputObject $card -NotePropertyName CreatedDate -NotePropertyValue $createdDate 
-                $cards += $card            
+                $results += $card            
             }
-			return $results 
+			return $results
         }
     }
-    process {
-        $request = $uri -f $id, $Status   
+    process {        
+        $request = $uri -f $id, $Status        
+        $boardCards = Get-Cards -RequestUri $request 
 
         try {			               
-            # have not tested all of these just yet. 
+            # # have not tested all of these just yet. 
             if ($PSBoundParameters.ContainsKey('Label')) {                    
                 $cards += $boardCards| Where-Object { if (($_.labels) -and $_.labels.Name -contains $Label) { $true } }
             }
@@ -65,15 +77,14 @@ function Get-TrelloBoardCard {
             {
                 $cards = $boardCards | Where-Object {$_.Name -eq $Name}
             }
-            elseif ($PSBoundParameters.ContainsKey('Id'))
+            elseif ($PSBoundParameters.ContainsKey('ShortId'))
             {
                 $cards = $boardCards| Where-Object {$_.idShort -eq $Id}
             }
             else
             {
-                $cards = $boardCards
-            }
-            
+                $cards += $boardCards    
+            }            
         }
         catch {
             Write-Error $_.Exception.Message
