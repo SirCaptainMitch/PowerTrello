@@ -71,15 +71,15 @@ function Get-TrelloBoardCard {
             }
             elseif ($PSBoundParameters.ContainsKey('Due'))
             {
-                $cards = $boardCards
+                $cards += $boardCards
             }
             elseif ($PSBoundParameters.ContainsKey('Name'))
             {
-                $cards = $boardCards | Where-Object {$_.Name -eq $Name}
+                $cards += $boardCards | Where-Object {$_.Name -eq $Name}
             }
             elseif ($PSBoundParameters.ContainsKey('ShortId'))
             {
-                $cards = $boardCards| Where-Object {$_.idShort -eq $Id}
+                $cards += $boardCards| Where-Object {$_.idShort -eq $Id}
             }
             else
             {
