@@ -3,24 +3,23 @@ function Get-TrelloCard {
     param
     (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
-        [String]$id
+        [String]$id,
 		
-        # [Parameter(ParameterSetName = 'Name')]
-        # [ValidateNotNullOrEmpty()]
-        # [string]$Name,
+        [Parameter(ParameterSetName = 'Name')]
+        [ValidateNotNullOrEmpty()]
+        [string]$Name,	
 		
-        # [Parameter(ParameterSetName = 'Id')]
-        # [ValidateNotNullOrEmpty()]
-        # [string]$Id,
-		
-        # [Parameter(ParameterSetName = 'Label')]
-        # [ValidateNotNullOrEmpty()]
-        # [string]$Label,
+        [Parameter(ParameterSetName = 'Label')]
+        [ValidateNotNullOrEmpty()]
+        [string]$Label,
 	
-        # [Parameter(ParameterSetName = 'Due')]
-        # [ValidateNotNullOrEmpty()]
-        # [ValidateSet('Today','Tomorrow','In7Days','In14Days')]
-        # [string]$Due
+        [Parameter(ParameterSetName = 'Due')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateSet('Today','Tomorrow','In7Days','In14Days')]
+        [string]$Due, 
+
+        [Parameter()]
+        [String]$Status = 'open'
 				
     )
     begin {
@@ -61,9 +60,7 @@ function Get-TrelloCard {
             }
             
         # try {
-
-		# 	# foreach ($board in $boards) {                
-               
+		# 	# foreach ($board in $boards) {               
         #         # # have not tested all of these just yet. 
         #         # if ($PSBoundParameters.ContainsKey('Label')) {                    
         #         #      $cards += $boardCards| Where-Object { if (($_.labels) -and $_.labels.Name -contains $Label) { $true } }
@@ -84,7 +81,6 @@ function Get-TrelloCard {
         #         # {
         #         #     $cards = $boardCards
         #         # }
-
         #     }
         # }
         # catch {

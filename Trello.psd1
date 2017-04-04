@@ -74,6 +74,7 @@
         'Get-Checklist',
         'Get-ChecklistItem',
         'Get-TrelloBoard',
+		'Get-TrelloBoardCard',
         'Get-TrelloBoardList',
         'Get-TrelloCard',
         'Get-TrelloCardAttachment',
