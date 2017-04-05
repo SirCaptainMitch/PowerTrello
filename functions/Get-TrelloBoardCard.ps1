@@ -48,7 +48,7 @@ function Get-TrelloBoardCard {
             )
 			
             $results = @()
-            Invoke-RestMethod -Uri $RequestUri
+            $cardCall = Invoke-RestMethod -Uri $RequestUri
 
             # Get the created date of the card since this is pulled from the id. 
             foreach ( $card in $cardCall){
