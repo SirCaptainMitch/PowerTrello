@@ -1,11 +1,11 @@
 function Set-TrelloConfiguration {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]        
         [string]$ApiKey,
 	
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [string]$AccessToken, 
         

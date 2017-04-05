@@ -87,6 +87,10 @@ function Request-TrelloAccessToken
 	}
 	
 	end { 
-		return $token
+
+		return [pscustomobject]@{
+									AccessToken = $token
+									ApiKey = $ApiKey
+								} 
 	}
 }
