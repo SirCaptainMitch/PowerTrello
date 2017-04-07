@@ -19,7 +19,6 @@ function Get-TrelloBoard
 		$ErrorActionPreference = 'Stop'
 		$baseUrl = $Global:trelloConfig.BaseUrl 
 		$string  = $Global:trelloConfig.String 
-		$uri = "$baseUrl/{0}/{1}?$string"
 		$boards = @()
 	}
 	process {
@@ -29,12 +28,12 @@ function Get-TrelloBoard
 			{
 				'ByName' {
 					$uri = "$baseUrl/members/me/boards?$string"
-					$boards = Invoke-RestMethod -Uri $uri 
-					$boards | Where-Object { $_.name -eq $Name }
+					$boards = (Invoke-RestMethod -Uri $uri ) | Where-Object { $_.name -eq $Name }
+					 
 				}
 				'ById' {
 					$uri = "$baseUrl/boards/$Id/?$string"
-					$boards = Invoke-RestMethod -Uri -f $uri
+					$boards = Invoke-RestMethod -Uri $uri
 				}
 				default
 				{
