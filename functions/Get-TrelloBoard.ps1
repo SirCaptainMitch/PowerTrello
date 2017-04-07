@@ -13,47 +13,33 @@ function Get-TrelloBoard
 	
 		[Parameter()]
 		[ValidateNotNullOrEmpty()]
-		[switch]$IncludeClosedBoards
+		[string]$Status = "open"
 	)
 	begin {
 		$ErrorActionPreference = 'Stop'
+		$baseUrl = $Global:trelloConfig.BaseUrl 
+		$string  = $Global:trelloConfig.String 
+		$uri = "$baseUrl/{0}/{1}?$string"
 		$boards = @()
 	}
 	process {
 		try
 		{
-			$getParams = @{
-				'key' = $trelloConfig.APIKey
-				'token' = $trelloConfig.AccessToken
-			}
-			if (-not $IncludeClosedBoards.IsPresent)
-			{
-				$getParams.filter = 'open'
-			}
-			
-			$baseUrl = $Global:trelloConfig.BaseUrl
-			$keyValues = @()
-			$getParams.GetEnumerator() | foreach {
-				$keyValues += "$($_.Key)=$($_.Value)"
-			}
-			
-			$paramString = $keyValues -join '&'
-			
 			switch ($PSCmdlet.ParameterSetName)
 			{
 				'ByName' {
-					$uri = "$baseUrl/members/me/boards"
-					$boards = Invoke-RestMethod -Uri ('{0}?{1}' -f $uri, $paramString)
-					$boards | where { $_.name -eq $Name }
+					$uri = "$baseUrl/members/me/boards?$string"
+					$boards = Invoke-RestMethod -Uri $uri 
+					$boards | Where-Object { $_.name -eq $Name }
 				}
 				'ById' {
-					$uri = "$baseUrl/boards/$Id"
-					$boards = Invoke-RestMethod -Uri ('{0}?{1}' -f $uri, $paramString)
+					$uri = "$baseUrl/boards/$Id/?$string"
+					$boards = Invoke-RestMethod -Uri -f $uri
 				}
 				default
 				{
-					$uri = "$baseUrl/members/me/boards"
-					$boards = Invoke-RestMethod -Uri ('{0}?{1}' -f $uri, $paramString)
+					$uri = "$baseUrl/members/me/boards?$string"
+					$boards = Invoke-RestMethod -Uri $uri 
 				}
 			}
 		}
