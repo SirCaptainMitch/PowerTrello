@@ -4,7 +4,9 @@ function Get-TrelloBoardList
 	param
 	(
 		[Parameter(Mandatory,ValueFromPipelineByPropertyName)]
-		[string]$id
+		[string]$id, 
+
+		[String]$name
 	)
 	begin
 	{
@@ -18,13 +20,17 @@ function Get-TrelloBoardList
 		try
 		{			
 			$lists = (Invoke-RestMethod ($uri -f $id)).lists
+
+			if ($Name)
+			{ 
+				$lists = $lists | Where-Object { $_.name -eq $name}
+			}
+
+			$lists 
 		}
 		catch
 		{
 			Write-Error $_.Exception.Message
 		}
-	}
-	end { 
-		return $lists 
 	}
 }
