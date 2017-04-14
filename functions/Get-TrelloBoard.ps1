@@ -34,18 +34,33 @@ function Get-TrelloBoard
 				'ByName' {
 					$uri = "$baseUrl/members/me/boards?$string"
 					$boards = ( Invoke-RestMethod -Uri $uri )  | Where-Object { $_.name -eq $Name }
+
+					foreach($board in $boards) { 
+						Add-Member -InputObject $board -NotePropertyName CreatedDate -NotePropertyValue (Convert-IdToDate $board.id)
+					}
+
 					$boards
 					 
 				}
 				'ById' {
 					$uri = "$baseUrl/boards/$Id/?$string"
 					$boards = Invoke-RestMethod -Uri $uri
+					
+					foreach($board in $boards) { 
+						Add-Member -InputObject $board -NotePropertyName CreatedDate -NotePropertyValue (Convert-IdToDate $board.id)
+					}
+					
 					$boards
 				}
 				default
 				{
 					$uri = "$baseUrl/members/me/boards?$string"
 					$boards = Invoke-RestMethod -Uri $uri 
+					
+					foreach($board in $boards) { 
+						Add-Member -InputObject $board -NotePropertyName CreatedDate -NotePropertyValue (Convert-IdToDate $board.id)
+					}
+
 					$boards
 				}
 			}

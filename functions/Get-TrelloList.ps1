@@ -9,7 +9,7 @@ function Get-TrelloList {
     begin {
         $ErrorActionPreference = 'Stop'
         $baseUrl = $Global:trelloConfig.BaseUrl 
-        $string = $Global:trelloConfig.String
+        $string = $Global:trelloConfig.String        
         $uri = "$baseUrl/lists/{0}?$string"
         $results = @() 
     }
@@ -18,14 +18,9 @@ function Get-TrelloList {
         try { 
             $list = Invoke-RestMethod ($uri -f $idList )
             Add-Member -InputObject $list -NotePropertyName CreatedDate -NotePropertyValue (Convert-IdToDate $list.id)
-            $results += $list
+            $list
         } catch { 
             Write-Error $_.Exception.Message
-        }
-       
-    }
-    
-    end {
-       return $results  
+        }       
     }
 }

@@ -2,7 +2,7 @@ function Get-TrelloCard {
     [CmdletBinding(DefaultParameterSetName = 'None')]
     param
     (
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(ValueFromPipelineByPropertyName)]
         [String]$id,
 		
         [Parameter(ParameterSetName = 'Name')]
