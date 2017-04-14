@@ -20,6 +20,11 @@ function Get-TrelloBoard
 		$baseUrl = $Global:trelloConfig.BaseUrl 
 		$string  = $Global:trelloConfig.String 
 		$boards = @()
+
+		if(!(Check-TrelloConfig)){ 
+			Write-Warning "The configuration is missing, please set the Trello config again."
+			continue
+		}
 	}
 	process {
 		try
@@ -28,17 +33,20 @@ function Get-TrelloBoard
 			{
 				'ByName' {
 					$uri = "$baseUrl/members/me/boards?$string"
-					$boards = (Invoke-RestMethod -Uri $uri ) | Where-Object { $_.name -eq $Name }
+					$boards = ( Invoke-RestMethod -Uri $uri )  | Where-Object { $_.name -eq $Name }
+					$boards
 					 
 				}
 				'ById' {
 					$uri = "$baseUrl/boards/$Id/?$string"
 					$boards = Invoke-RestMethod -Uri $uri
+					$boards
 				}
 				default
 				{
 					$uri = "$baseUrl/members/me/boards?$string"
 					$boards = Invoke-RestMethod -Uri $uri 
+					$boards
 				}
 			}
 		}
@@ -46,8 +54,5 @@ function Get-TrelloBoard
 		{
 			Write-Error $_.Exception.Message
 		}
-	}
-	end { 
-		return $boards 
 	}
 }

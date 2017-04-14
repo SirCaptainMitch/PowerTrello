@@ -65,32 +65,33 @@ function Get-TrelloBoardCard {
         $boardCards = Get-Cards -RequestUri $request 
 
         try {			               
-            # # have not tested all of these just yet. 
             if ($PSBoundParameters.ContainsKey('Label')) {                    
-                $cards += $boardCards| Where-Object { if (($_.labels) -and $_.labels.Name -contains $Label) { $true } }
+                $cards = $boardCards | Where-Object { if (($_.labels) -and $_.labels.Name -contains $Label) { $true } }
+                $cards
             }
             elseif ($PSBoundParameters.ContainsKey('Due'))
             {
-                $cards += $boardCards
+                $cards = $boardCards
+                $cards
             }
             elseif ($PSBoundParameters.ContainsKey('Name'))
             {
-                $cards += $boardCards | Where-Object {$_.Name -eq $Name}
+                $cards = $boardCards | Where-Object {$_.Name -eq $Name}
+                $cards
             }
             elseif ($PSBoundParameters.ContainsKey('ShortId'))
             {
-                $cards += $boardCards| Where-Object {$_.idShort -eq $Id}
+                $cards = $boardCards| Where-Object {$_.idShort -eq $Id}
+                $cards
             }
             else
             {
-                $cards += $boardCards    
+                $cards = $boardCards
+                $cards 
             }            
         }
         catch {
             Write-Error $_.Exception.Message
         }
     }
-	end { 
-		return $cards
-	}
 }

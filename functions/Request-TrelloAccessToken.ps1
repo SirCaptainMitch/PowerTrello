@@ -24,9 +24,6 @@ function Request-TrelloAccessToken
 		[Switch]$NoWindows
 		
 	)
-	begin { 
-
-	}
 	process { 
 		$ErrorActionPreference = 'Stop'
 		If (!$ApiKey) { $ApiKey = $global:trelloConfig.ApiKey}
