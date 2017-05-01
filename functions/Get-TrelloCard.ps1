@@ -19,26 +19,51 @@ function Get-TrelloCard {
         [string]$Due, 
 
         [Parameter()]
-        [String]$Status = 'open'
+        [String]$Status = 'open', 
+
+        [switch]$CustomFields
 				
     )
     begin {
         $ErrorActionPreference = 'Stop'
         $baseUrl = $Global:trelloConfig.BaseUrl
         $string = $Global:trelloConfig.String
-        $uri = "$baseUrl/boards/{0}/cards?filter=all&$string"
-        $cards = @() 	
+        $uri = "$baseUrl/cards/{0}?&$string"
+        $searchUri = "$baseUrl/search?query=$name&$string"
+        $cards = @()
 
     }
     process {
 
-        $request = $uri -f $id
-        $return = Invoke-RestMethod -uri $request
+        $id 
+        if ($id){ 
+            $request = $uri -f $id
 
+            $return = Invoke-RestMethod -uri $request
+
+        } elseif ($name) { 
+            $request = $searchUri 
+            
+            $return =  (Invoke-RestMethod -uri $request).cards
+
+        }
+        
         foreach ($card in $return ){ 
             $createdDate = Convert-IdToDate -ObjectId $card.Id
-            Add-Member -InputObject $card -NotePropertyName CreatedDate -NotePropertyValue $createdDate 
+            
+            if ( $CustomFields ) {                     
+                $fields = $card | Get-TrelloCardCustomFields
+                Add-Member -InputObject $card -NotePropertyName 'fields' -NotePropertyValue $fields                 
+            }
+            
+            
+            Add-Member -InputObject $card -NotePropertyName CreatedDate -NotePropertyValue $createdDate
+            
+
             $cards += $card
         }
+
+
+        $cards
     }
 }

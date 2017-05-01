@@ -22,7 +22,9 @@ function Get-TrelloBoardCard {
         [String]$Status = 'open', 
 
         [Parameter(ParameterSetName= 'ShortId')]
-        [String]$ShortId
+        [String]$ShortId, 
+
+        [switch]$CustomFields
 				
     )
     begin {
@@ -49,9 +51,14 @@ function Get-TrelloBoardCard {
 			
             $results = @()
             $cardCall = Invoke-RestMethod -Uri $RequestUri
-
-            # Get the created date of the card since this is pulled from the id. 
+            # Get the created date of the card since this is pulled from the id.
             foreach ( $card in $cardCall){
+
+                if ( $CustomFields ) {                     
+                    $fields = $card | Get-TrelloCardCustomFields
+
+                    Add-Member -InputObject $card -NotePropertyName 'fields' -NotePropertyValue $fields                 
+                }
                                  
                 $createdDate = Convert-IdToDate -ObjectId $card.Id
                 Add-Member -InputObject $card -NotePropertyName CreatedDate -NotePropertyValue $createdDate 
@@ -76,6 +83,7 @@ function Get-TrelloBoardCard {
             }
             elseif ($PSBoundParameters.ContainsKey('Name'))
             {
+
                 $cards = $boardCards | Where-Object {$_.Name -eq $Name}
                 $cards
             }
