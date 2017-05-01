@@ -13,14 +13,27 @@ function Set-TrelloConfiguration {
         [string]$BaseUrl = 'https://api.trello.com/1', 
         
         [ValidateNotNullOrEmpty()]
-        [string]$ProjectName = 'PowerTrello'
+        [string]$ProjectName = 'PowerTrello',
+        
+        [ValidateNotNullOrEmpty()]
+        [string]$CustomFieldsPath = '.\config\Custom-Fields.json'
     )
 
-    $global:trelloConfig = [pscustomobject]@{
-        'APIKey' = $APIKey
-        'AccessToken' = $AccessToken
-        'String' = "key=$APIKey&token=$AccessToken"
-        'ProjectName' = $ProjectName
-        'BaseUrl' = $BaseUrl
+    begin { 
+        
+        if ((Test-Path -Path $CustomFieldsPath)) { 
+            $customFields = Get-Content $CustomFieldsPath -raw | ConvertFrom-JSON 
+        }
+    }
+
+    process { 
+        $global:trelloConfig = [pscustomobject]@{
+            'APIKey' = $APIKey
+            'AccessToken' = $AccessToken
+            'String' = "key=$APIKey&token=$AccessToken"
+            'ProjectName' = $ProjectName
+            'BaseUrl' = $BaseUrl
+            'CustomFields' = $customFields
+        }    
     }    
 }
