@@ -87,7 +87,9 @@
         'Request-TrelloAccessToken',
         'Set-TrelloCardList',
         'Set-TrelloConfiguration',
-		'Get-TrelloList'
+		'Get-TrelloList',
+		'Set-TrelloCustomFieldsConfig',
+		'Get-TrelloCardCustomFields'
 	)
 	
 	# Cmdlets to export from this module

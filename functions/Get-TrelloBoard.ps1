@@ -13,47 +13,55 @@ function Get-TrelloBoard
 	
 		[Parameter()]
 		[ValidateNotNullOrEmpty()]
-		[switch]$IncludeClosedBoards
+		[string]$Status = "open"
 	)
 	begin {
 		$ErrorActionPreference = 'Stop'
+		$baseUrl = $Global:trelloConfig.BaseUrl 
+		$string  = $Global:trelloConfig.String 
 		$boards = @()
+
+		if(!(Check-TrelloConfig)){ 
+			Write-Warning "The configuration is missing, please set the Trello config again."
+			continue
+		}
 	}
 	process {
 		try
 		{
-			$getParams = @{
-				'key' = $trelloConfig.APIKey
-				'token' = $trelloConfig.AccessToken
-			}
-			if (-not $IncludeClosedBoards.IsPresent)
-			{
-				$getParams.filter = 'open'
-			}
-			
-			$baseUrl = $Global:trelloConfig.BaseUrl
-			$keyValues = @()
-			$getParams.GetEnumerator() | foreach {
-				$keyValues += "$($_.Key)=$($_.Value)"
-			}
-			
-			$paramString = $keyValues -join '&'
-			
 			switch ($PSCmdlet.ParameterSetName)
 			{
 				'ByName' {
-					$uri = "$baseUrl/members/me/boards"
-					$boards = Invoke-RestMethod -Uri ('{0}?{1}' -f $uri, $paramString)
-					$boards | where { $_.name -eq $Name }
+					$uri = "$baseUrl/members/me/boards?$string"
+					$boards = ( Invoke-RestMethod -Uri $uri )  | Where-Object { $_.name -eq $Name }
+
+					foreach($board in $boards) { 
+						Add-Member -InputObject $board -NotePropertyName CreatedDate -NotePropertyValue (Convert-IdToDate $board.id)
+					}
+
+					$boards
+					 
 				}
 				'ById' {
-					$uri = "$baseUrl/boards/$Id"
-					$boards = Invoke-RestMethod -Uri ('{0}?{1}' -f $uri, $paramString)
+					$uri = "$baseUrl/boards/$Id/?$string"
+					$boards = Invoke-RestMethod -Uri $uri
+					
+					foreach($board in $boards) { 
+						Add-Member -InputObject $board -NotePropertyName CreatedDate -NotePropertyValue (Convert-IdToDate $board.id)
+					}
+					
+					$boards
 				}
 				default
 				{
-					$uri = "$baseUrl/members/me/boards"
-					$boards = Invoke-RestMethod -Uri ('{0}?{1}' -f $uri, $paramString)
+					$uri = "$baseUrl/members/me/boards?$string"
+					$boards = Invoke-RestMethod -Uri $uri 
+					
+					foreach($board in $boards) { 
+						Add-Member -InputObject $board -NotePropertyName CreatedDate -NotePropertyValue (Convert-IdToDate $board.id)
+					}
+
+					$boards
 				}
 			}
 		}
@@ -61,8 +69,5 @@ function Get-TrelloBoard
 		{
 			Write-Error $_.Exception.Message
 		}
-	}
-	end { 
-		return $boards 
 	}
 }
