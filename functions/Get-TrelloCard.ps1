@@ -34,17 +34,13 @@ function Get-TrelloCard {
 
     }
     process {
-        
-        if ($id){ 
+
+        if ($id){
             $request = $uri -f $id
-
             $return = Invoke-RestMethod -uri $request
-
         } elseif ($name) { 
-            $request = $searchUri 
-            
+            $request = $searchUri
             $return =  (Invoke-RestMethod -uri $request).cards
-
         }
         
         foreach ($card in $return ){ 
@@ -63,6 +59,6 @@ function Get-TrelloCard {
         }
 
 
-        $cards
+        return $cards
     }
 }
