@@ -34,8 +34,7 @@ function Get-TrelloCard {
 
     }
     process {
-
-        $id 
+        
         if ($id){ 
             $request = $uri -f $id
 
